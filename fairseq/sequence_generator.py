@@ -4,9 +4,10 @@
 # LICENSE file in the root directory of this source tree.
 
 import math
-import sys
+import sys, os
 from typing import Dict, List, Optional
 
+import numpy as np
 import torch
 import torch.nn as nn
 from torch import Tensor
@@ -209,6 +210,7 @@ class SequenceGenerator(nn.Module):
         prefix_tokens: Optional[Tensor] = None,
         constraints: Optional[Tensor] = None,
         bos_token: Optional[int] = None,
+        feat_output_dirs: Optional[dict] = {},
     ):
         incremental_states = torch.jit.annotate(
             List[Dict[str, Dict[str, Optional[Tensor]]]],
@@ -272,6 +274,16 @@ class SequenceGenerator(nn.Module):
         # compute the encoder output for each beam
         with torch.autograd.profiler.record_function("EnsembleModel: forward_encoder"):
             encoder_outs = self.model.forward_encoder(net_input)
+
+        if feat_output_dirs:
+            for feat_name, output_dir in feat_output_dirs.items():
+                feats = encoder_outs[0][feat_name][0].transpose(0, 1)
+                gold_feats = sample['gold_feat'].transpose(0, 1)
+                for id, feat, gold_feat in zip(sample['id'], feats, gold_feats):
+                    if not os.path.exists(output_dir):
+                        os.makedirs(output_dir, exist_ok=True)
+                    np.save(os.path.join(output_dir, f'{id}.pred.npy'), feat.cpu())
+                    np.save(os.path.join(output_dir, f'{id}.gold.npy'), gold_feat.cpu())
 
         # placeholder of indices for bsz * beam_size to hold tokens and accumulative scores
         new_order = torch.arange(bsz).view(-1, 1).repeat(1, beam_size).view(-1)

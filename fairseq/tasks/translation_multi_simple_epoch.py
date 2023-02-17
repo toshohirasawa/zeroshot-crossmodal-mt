@@ -96,8 +96,11 @@ class TranslationMultiSimpleEpochTask(LegacyFairseqTask):
         # models.build_model(). This allows multitask type of sub-class can
         # build models other than the input lang_pairs
         self.model_lang_pairs = self.lang_pairs
-        self.source_langs = [d.split("-")[0] for d in self.lang_pairs]
-        self.target_langs = [d.split("-")[1] for d in self.lang_pairs]
+        self.source_langs = [d.split(":")[0].split("-")[0] for d in self.lang_pairs]
+        self.target_langs = [d.split(":")[0].split("-")[1] for d in self.lang_pairs]
+
+        self.max_data = [d[1] if len(d)>1 else None for d in [d.split(":") for d in self.lang_pairs]]
+
         self.check_dicts(self.dicts, self.source_langs, self.target_langs)
 
         self.sampling_method = SamplingMethod.build_sampler(args, self)
@@ -224,7 +227,7 @@ class TranslationMultiSimpleEpochTask(LegacyFairseqTask):
         return loss, sample_size, logging_output
 
     def inference_step(
-        self, generator, models, sample, prefix_tokens=None, constraints=None
+        self, generator, models, sample, prefix_tokens=None, constraints=None, feat_output_dirs={},
     ):
         with torch.no_grad():
             _, tgt_langtok_spec = self.args.langtoks["main"]
@@ -243,6 +246,7 @@ class TranslationMultiSimpleEpochTask(LegacyFairseqTask):
                     sample,
                     prefix_tokens=prefix_tokens,
                     constraints=constraints,
+                    feat_output_dirs=feat_output_dirs,
                 )
             else:
                 return generator.generate(

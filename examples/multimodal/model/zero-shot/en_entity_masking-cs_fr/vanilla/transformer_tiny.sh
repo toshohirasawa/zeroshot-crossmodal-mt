@@ -1,0 +1,1 @@
+../../../../model/zero-shot/template/transformer_tiny.sh

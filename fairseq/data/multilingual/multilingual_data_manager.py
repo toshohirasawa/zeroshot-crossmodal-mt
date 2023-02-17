@@ -371,7 +371,7 @@ class MultilingualDatasetManager(object):
         check_langs(
             language_list,
             (
-                [p.split("-") for p in args.lang_pairs]
+                [p.split(":")[0].split("-") for p in args.lang_pairs]
                 if training
                 else [(args.source_lang, args.target_lang)]
             ),
@@ -410,10 +410,10 @@ class MultilingualDatasetManager(object):
                 else []
             )
             src_langs_to_load_dicts = sorted(
-                {p.split("-")[0] for p in (args.lang_pairs + extra_lang_pairs)}
+                {p.split(":")[0].split("-")[0] for p in (args.lang_pairs + extra_lang_pairs)}
             )
             tgt_langs_to_load_dicts = sorted(
-                {p.split("-")[1] for p in (args.lang_pairs + extra_lang_pairs)}
+                {p.split(":")[0].split("-")[1] for p in (args.lang_pairs + extra_lang_pairs)}
             )
         else:
             src_langs_to_load_dicts = [args.source_lang]
@@ -910,7 +910,7 @@ class MultilingualDatasetManager(object):
             paths = utils.split_paths(paths)
             shards_dict = self._get_shard_num_dict(split, paths)
             lang_dirs = [
-                lang_pair.split("-") for lang_pair in lang_pairs[data_category]
+                lang_pair.split(":")[0].split("-") for lang_pair in lang_pairs[data_category]
             ]
             lang_dirs = [x if len(x) > 1 else (x[0], x[0]) for x in lang_dirs]
             for src, tgt in lang_dirs:
@@ -967,10 +967,13 @@ class MultilingualDatasetManager(object):
 
             # infer langcode
             lang_dirs = [
-                lang_pair.split("-") for lang_pair in lang_pairs[data_category]
+                lang_pair.split(":")[0].split("-") for lang_pair in lang_pairs[data_category]
+            ]
+            max_data = [
+                d[1] if len(d)>1 else None for d in [lang_pair.split(":") for lang_pair in lang_pairs[data_category]]
             ]
             lang_dirs = [x if len(x) > 1 else (x[0], x[0]) for x in lang_dirs]
-            for src, tgt in lang_dirs:
+            for (src, tgt), max_items in zip(lang_dirs, max_data):
                 assert src is not None or data_category == "mono_dae", (
                     f"error: src={src}, " f"tgt={tgt} for data_category={data_category}"
                 )
@@ -992,6 +995,7 @@ class MultilingualDatasetManager(object):
                         "tgt_dict": self.get_target_dictionary(tgt),
                         "data_category": data_category,
                         "langtok_spec": lang_tok_spec,
+                        "max_items": max_items,
                     }
                 )
         return param_list

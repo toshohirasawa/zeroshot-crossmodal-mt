@@ -1,0 +1,1 @@
+../../../../model/full/template/gated_attentive.sh

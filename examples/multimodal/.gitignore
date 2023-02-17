@@ -1,0 +1,28 @@
+# generic
+.*/
+
+# data
+*.zip
+
+multi30k/
+AmbigCaps/
+CoMMuTE/
+processed_data/
+
+# lib (either a directory or a symbolic link)
+mosesdecoder
+mosesdecoder/
+OpenAI-CLIP-Feature
+OpenAI-CLIP-Feature/
+detr
+detr/
+bottom-up-attention
+bottom-up-attention/
+
+# model, checkpoint
+model/full/en-*
+model/zero-shot/en-*
+checkpoint/
+
+# anaconda
+environment/src/

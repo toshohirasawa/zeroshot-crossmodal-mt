@@ -1,0 +1,1 @@
+../../../../model/zero-shot/template/lvp_static.sh

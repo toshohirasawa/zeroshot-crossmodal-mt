@@ -1,0 +1,1 @@
+../../../scripts/average_checkpoints.py

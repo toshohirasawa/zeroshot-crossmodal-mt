@@ -534,7 +534,7 @@ class FairseqTask(object):
         raise NotImplementedError
 
     def inference_step(
-        self, generator, models, sample, prefix_tokens=None, constraints=None
+        self, generator, models, sample, prefix_tokens=None, constraints=None, **kwargs,
     ):
         with torch.no_grad():
             return generator.generate(

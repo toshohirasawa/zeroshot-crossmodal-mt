@@ -543,6 +543,10 @@ def cli_main(
 
     cfg = convert_namespace_to_omegaconf(args)
 
+    if cfg.common.set_detect_anomaly:
+        torch.autograd.set_detect_anomaly(True)
+        logger.info("Enabled detecting anomaly.")
+
     if cfg.common.use_plasma_view:
         server = PlasmaStore(path=cfg.common.plasma_path)
         logger.info(

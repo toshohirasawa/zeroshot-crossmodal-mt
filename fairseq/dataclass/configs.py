@@ -251,6 +251,10 @@ class CommonConfig(FairseqDataclass):
         },
     )
 
+    set_detect_anomaly: bool = field(
+        default=False, metadata={"help": "whether run torch.autograd.set_detect_anomaly(True)"}
+    )
+
 
 @dataclass
 class DistributedTrainingConfig(FairseqDataclass):
@@ -1002,6 +1006,10 @@ class GenerationConfig(FairseqDataclass):
         metadata={"help": "EOS token"},
     )
 
+    feat_output_dirs: str = field(
+        default="{}",
+        metadata={"help": "key: feat name, value: output dir"}
+    )
 
 @dataclass
 class CommonEvalConfig(FairseqDataclass):

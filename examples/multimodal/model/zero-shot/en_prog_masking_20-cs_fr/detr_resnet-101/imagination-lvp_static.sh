@@ -1,0 +1,1 @@
+../../../../model/zero-shot/template/imagination-lvp_static.sh

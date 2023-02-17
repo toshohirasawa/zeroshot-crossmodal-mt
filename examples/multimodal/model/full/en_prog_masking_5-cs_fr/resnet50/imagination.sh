@@ -1,0 +1,1 @@
+../../../../model/full/template/imagination.sh

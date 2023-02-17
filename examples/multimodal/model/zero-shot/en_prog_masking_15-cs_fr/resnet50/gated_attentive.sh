@@ -1,0 +1,1 @@
+../../../../model/zero-shot/template/gated_attentive.sh

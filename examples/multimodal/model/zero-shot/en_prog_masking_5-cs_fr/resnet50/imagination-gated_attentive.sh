@@ -1,0 +1,1 @@
+../../../../model/zero-shot/template/imagination-gated_attentive.sh
